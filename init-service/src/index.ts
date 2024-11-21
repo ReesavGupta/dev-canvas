@@ -21,7 +21,7 @@ app.post('/project', async (req, res) => {
   res.status(200).send('Project created')
 })
 
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3002
 
 app.listen(port, () => {
   console.log(`init service listening on port:${port}`)
