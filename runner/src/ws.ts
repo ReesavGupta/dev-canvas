@@ -9,14 +9,8 @@ const terminalManager = new TerminalManager()
 export const initWsConnection = (httpServer: HttpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: ['https://example.com'], // Only allow specific domain(s)
+      origin: ['*'], // Only allow specific domain(s)
       methods: ['GET', 'POST'], // Limit to necessary HTTP methods
-      allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
-      credentials: false, // Disable credentials if not needed
-      maxAge: 600, // Cache preflight responses for 10 minutes
-      preflightContinue: false, // Stop after handling preflight request
-      optionsSuccessStatus: 200, // Status for successful preflight requests
-      exposedHeaders: ['X-Custom-Header'], // Expose only necessary headers
     },
   })
 
@@ -26,7 +20,7 @@ export const initWsConnection = (httpServer: HttpServer) => {
     console.log(`\nthis is the host: ${host}`)
 
     const canvasID = host?.split('.')[0]
-
+    // canvasID.canvas.com
     if (!canvasID) {
       socket.disconnect()
       // need to clear the terminal manager here with the corresponding socketID

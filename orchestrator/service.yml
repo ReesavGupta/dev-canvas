@@ -20,37 +20,37 @@ spec:
       initContainers:
         - name: copy-s3-resources
           image: amazon/aws-cli
-          command: ['/bin/sh', '-c']
+          command: ["/bin/sh", "-c"]
           args:
             - >
-              aws s3 cp s3://repl/code/service_name/ /workspace/ --recursive &&
+              aws s3 cp s3://base-code/code/service_name/ /workspace/ --recursive --endpoint-url=https://4e628fa55783a94aa07783b6e4624315.r2.cloudflarestorage.com &&
               echo "Resources copied from S3";
           env:
             - name: AWS_ACCESS_KEY_ID
-              value: 'your_aws_key_id'
+              value: "56324e1c74bf900ea5a32eed118e77ec"
             - name: AWS_SECRET_ACCESS_KEY
-              value: 'your_aws_secret'
+              value: "f49604067d6c0d3a402d4e33940e803ba355a90850f2820c3c4e5dfe1df51db9"
           volumeMounts:
             - name: workspace-volume
               mountPath: /workspace
       containers:
         - name: runner
-          image: 100xdevs/runner:latest
+          image: reesavgupta/dev-canvas-runner:latest
           ports:
             - containerPort: 3001
-            - containerPort: 3000
+            - containerPort: 3004
           volumeMounts:
             - name: workspace-volume
               mountPath: /workspace
           resources:
-            # Bounty $25 Use ephemeral-storage to add space limits here
             requests:
-              cpu: '1'
-              memory: '1Gi'
+              cpu: "1"
+              memory: "1Gi"
+              ephemeral-storage: "2Gi"
             limits:
-              cpu: '1'
-              memory: '1Gi'
-
+              cpu: "1"
+              memory: "1Gi"
+              ephemeral-storage: "2Gi"
 ---
 apiVersion: v1
 kind: Service
@@ -66,8 +66,8 @@ spec:
       targetPort: 3001
     - protocol: TCP
       name: user
-      port: 3000
-      targetPort: 3000
+      port: 3004
+      targetPort: 3004
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -76,7 +76,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: service_name.peetcode.com
+    - host: service_name.devcanvas.com
       http:
         paths:
           - path: /
@@ -86,7 +86,7 @@ spec:
                 name: service_name
                 port:
                   number: 3001
-    - host: service_name.autogpt-cloud.com
+    - host: service_name.devcanvasfront.com
       http:
         paths:
           - path: /
@@ -95,4 +95,4 @@ spec:
               service:
                 name: service_name
                 port:
-                  number: 3000
+                  number: 3004
